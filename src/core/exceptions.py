@@ -1,0 +1,2 @@
+class OpenRouterRequestError(RuntimeError):
+    pass

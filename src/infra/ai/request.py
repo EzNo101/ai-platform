@@ -1,9 +1,15 @@
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from typing import Any, cast
+
 
 from src.core.config import settings
 from src.core.exceptions import OpenRouterRequestError
-from src.infra.ai.client import get_openrouter_client
+
+if TYPE_CHECKING:
+    from openrouter import OpenRouter, components
 
 
 # helps get value from 2 forms of object(dict or object)
@@ -31,20 +37,22 @@ def _extract_text(response: Any) -> str:
 
 
 async def create_chat_completion(
-    messages: list[dict[str, Any]],
+    client: OpenRouter,
+    messages: list[components.ChatMessagesTypedDict],
     *,
     model: str | None = None,
     stream: bool = False,
     max_tokens: int | None = None,
     **kwargs: Any,
 ):
-    client = get_openrouter_client()
-    response = await client.chat.completions.create(
+    response = await client.chat.send_async(
         messages=messages,
-        model=model,
+        model=model or settings.OPENROUTER_AI_MODEL,
         stream=stream,
         max_tokens=max_tokens,
         **kwargs,
     )
 
-    TODO: complete method later
+    # TODO: add message stream later
+
+    return _extract_text(response)

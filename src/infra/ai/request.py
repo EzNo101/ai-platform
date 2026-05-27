@@ -19,7 +19,15 @@ def _extract_text(response: Any) -> str:
     if not choices:
         raise OpenRouterRequestError("OpenRouter response does not contain choices.")
 
-    # TODO: complete text extraction tomorrow
+    choice = choices[0]
+    message = _get_value(choice, "message")
+    if message is None:
+        raise OpenRouterRequestError("OpenRouter response does not contain message")
+    content = _get_value(message, "content")
+    if content is None:
+        raise OpenRouterRequestError("OpenRouter response does not contain answer")
+
+    return content
 
 
 async def create_chat_completion(
@@ -29,4 +37,14 @@ async def create_chat_completion(
     stream: bool = False,
     max_tokens: int | None = None,
     **kwargs: Any,
-): ...
+):
+    client = get_openrouter_client()
+    response = await client.chat.completions.create(
+        messages=messages,
+        model=model,
+        stream=stream,
+        max_tokens=max_tokens,
+        **kwargs,
+    )
+
+    TODO: complete method later

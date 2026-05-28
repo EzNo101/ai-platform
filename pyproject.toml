@@ -9,4 +9,5 @@ dependencies = [
     "openrouter>=0.9.1",
     "pydantic-settings>=2.14.1",
     "uvicorn>=0.48.0",
+    "websockets>=16.0",
 ]

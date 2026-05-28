@@ -53,6 +53,31 @@ async def create_chat_completion(
         **kwargs,
     )
 
-    # TODO: add message stream later
-
     return _extract_text(response)
+
+
+async def stream_chat_completion(
+    client: OpenRouter,
+    messages: list[components.ChatMessagesTypedDict],
+    *,
+    model: str | None = None,
+    max_tokens: int | None = None,
+    **kwargs: Any,
+):
+    response = await client.chat.send_async(
+        messages=messages,
+        model=model or settings.OPENROUTER_AI_MODEL,
+        stream=True,
+        max_tokens=max_tokens,
+        **kwargs,
+    )
+
+    async for event in response:
+        if not event.choices:
+            continue
+
+        delta = event.choices[0].delta
+        chunk = getattr(delta, "content", None)
+
+        if chunk:
+            yield chunk

@@ -17,7 +17,8 @@ async def chat_websocket(websocket: WebSocket, chat_service: ChatServiceDependen
     try:
         while True:
             user_prompt = await websocket.receive_text()
-            answer = await chat_service.chat(user_prompt)
-            await websocket.send_text(answer)
+            async for chunk in chat_service.stream_chat(user_prompt):
+                await websocket.send_text(chunk)
+
     except WebSocketDisconnect:
         pass

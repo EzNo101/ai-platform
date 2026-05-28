@@ -1,11 +1,12 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, AsyncIterator
+from typing import TYPE_CHECKING
 
 
 from src.infra.ai.request import create_chat_completion, stream_chat_completion
 
 if TYPE_CHECKING:
     from openrouter import OpenRouter, components
+    from typing import AsyncIterator
 
 
 class ChatService:

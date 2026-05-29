@@ -17,13 +17,16 @@ class ChatService:
         messages: list[components.ChatMessagesTypedDict] = [
             {"role": "user", "content": prompt},
         ]
-        return await create_chat_completion(client=self.client, messages=messages)
+        return await create_chat_completion(
+            client=self.client, messages=messages
+        )  # TODO: add usage logic and change answer method
 
     async def stream_chat(self, prompt: str) -> AsyncIterator[str]:
         messages: list[components.ChatMessagesTypedDict] = [
             {"role": "user", "content": prompt},
         ]
         async for chunk in stream_chat_completion(
-            client=self.client, messages=messages
+            client=self.client,
+            messages=messages,  # TODO: also fix that later
         ):
             yield chunk

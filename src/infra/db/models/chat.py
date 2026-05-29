@@ -12,6 +12,7 @@ class ChatSession(Base, IdMixin, CreatedAtMixin, UpdatedAtMixin):
         back_populates="session",
         cascade="all, delete-orphan",
     )
+    summary: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
 class ChatMessage(Base, IdMixin, CreatedAtMixin, UpdatedAtMixin):

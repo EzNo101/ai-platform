@@ -8,8 +8,6 @@ from src.infra.db.models.mixins import IdMixin, CreatedAtMixin, UpdatedAtMixin
 
 
 class ChatSession(Base, IdMixin, CreatedAtMixin, UpdatedAtMixin):
-    __tablename__ = "chat_sessions"
-
     messages: Mapped[list[ChatMessage]] = relationship(
         back_populates="session",
         cascade="all, delete-orphan",
@@ -17,8 +15,6 @@ class ChatSession(Base, IdMixin, CreatedAtMixin, UpdatedAtMixin):
 
 
 class ChatMessage(Base, IdMixin, CreatedAtMixin, UpdatedAtMixin):
-    __tablename__ = "chat_messages"
-
     session_id: Mapped[str] = mapped_column(
         ForeignKey("chat_sessions.id"),
         index=True,

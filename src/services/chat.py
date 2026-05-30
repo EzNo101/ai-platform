@@ -6,27 +6,25 @@ from src.infra.ai.request import create_chat_completion, stream_chat_completion
 
 if TYPE_CHECKING:
     from openrouter import OpenRouter, components
-    from typing import AsyncIterator
+    from src.infra.ai.types import ChatCompletionResult, StreamChatResult
 
 
 class ChatService:
     def __init__(self, client: OpenRouter) -> None:
         self.client = client
 
-    async def chat(self, prompt: str) -> str:
+    async def chat(self, prompt: str) -> ChatCompletionResult:
         messages: list[components.ChatMessagesTypedDict] = [
             {"role": "user", "content": prompt},
         ]
-        return await create_chat_completion(
-            client=self.client, messages=messages
-        )  # TODO: add usage logic and change answer method
 
-    async def stream_chat(self, prompt: str) -> AsyncIterator[str]:
+        return await create_chat_completion(client=self.client, messages=messages)
+
+    async def stream_chat(self, prompt: str) -> StreamChatResult:
         messages: list[components.ChatMessagesTypedDict] = [
             {"role": "user", "content": prompt},
         ]
-        async for chunk in stream_chat_completion(
+        return await stream_chat_completion(
             client=self.client,
-            messages=messages,  # TODO: also fix that later
-        ):
-            yield chunk
+            messages=messages,
+        )

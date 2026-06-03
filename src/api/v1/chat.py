@@ -1,6 +1,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from src.core.dependencies import ChatServiceDependency
+from src.schemas.chat import ChatInitMessage
 
 router = APIRouter(prefix="/chat")
 
@@ -16,9 +17,10 @@ async def chat_websocket(websocket: WebSocket, chat_service: ChatServiceDependen
 
     try:
         while True:
-            user_prompt = await websocket.receive_text()
+            first_message = await websocket.receive_json()
+            init = ChatInitMessage.model_validate(first_message)
 
-            result = await chat_service.stream_chat(user_prompt)
+            result = await chat_service.stream_chat(init.prompt)
 
             buffer: list[str] = []
             async for chunk in result.stream:

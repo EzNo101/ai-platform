@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, Text
+from sqlalchemy import ForeignKey, Text, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.infra.db.base import Base
@@ -8,6 +8,12 @@ from src.infra.db.models.mixins import IdMixin, CreatedAtMixin, UpdatedAtMixin
 
 
 class ChatSession(Base, IdMixin, CreatedAtMixin, UpdatedAtMixin):
+    session_id: Mapped[str] = mapped_column(
+        String(32),
+        unique=True,
+        nullable=False,
+        index=True,
+    )
     messages: Mapped[list[ChatMessage]] = relationship(
         back_populates="session",
         cascade="all, delete-orphan",
@@ -17,7 +23,7 @@ class ChatSession(Base, IdMixin, CreatedAtMixin, UpdatedAtMixin):
 
 class ChatMessage(Base, IdMixin, CreatedAtMixin, UpdatedAtMixin):
     session_id: Mapped[str] = mapped_column(
-        ForeignKey("chat_sessions.id"),
+        ForeignKey("chat_sessions.session_id"),
         index=True,
         nullable=False,
     )
